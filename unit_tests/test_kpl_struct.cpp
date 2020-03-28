@@ -3,6 +3,9 @@ extern "C" {
 }
 #include <gtest/gtest.h>
  
+TEST(Add_function, NULL_structure) {
+    ASSERT_TRUE(Add(NULL, 0, 0) ==  NULL);
+}
  
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
