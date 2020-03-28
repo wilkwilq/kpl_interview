@@ -230,6 +230,56 @@ TEST(Add_function, two_range_add_third_up) {
     free(kpl_struct_1);
 }
 
+TEST(Add_function, three_range_add_fourth_up) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = 13;
+    int32_t end = 15;
+    kpl_struct_t* output = NULL;
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 2;    
+    kpl_struct_1->next = NULL;    
+    output = Add(kpl_struct_1, 3, 5);
+    output = Add(kpl_struct_1, 7, 9);
+    output = Add(output, start, end);
+
+    EXPECT_EQ(13, output->next->next->next->start);
+    EXPECT_EQ(15, output->next->next->next->end);
+    free(kpl_struct_1);
+}
+
+TEST(Add_function, two_range_one_merge) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = 4;
+    int32_t end = 10;
+    kpl_struct_t* output = NULL;
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 5;    
+    kpl_struct_1->next = NULL;    
+    output = Add(kpl_struct_1, 8, 12);
+    output = Add(output, start, end);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(12, output->end);
+    free(kpl_struct_1);
+}
+
+TEST(Add_function, three_range_one_merge) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = 4;
+    int32_t end = 10;
+    kpl_struct_t* output = NULL;
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 5;    
+    kpl_struct_1->next = NULL;    
+    output = Add(kpl_struct_1, 8, 12);
+    output = Add(kpl_struct_1, 15, 20);
+    output = Add(output, start, end);
+
+    EXPECT_EQ(15, output->next->start);
+    EXPECT_EQ(20, output->next->end);
+    free(kpl_struct_1);
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
