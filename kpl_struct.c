@@ -22,5 +22,9 @@
 /* ==================================================================== */
 
 kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
-    return NULL;
+    if (NULL == kpl_struct)
+        return NULL;
+
+    kpl_struct->end = end;
+    return kpl_struct;
 }
