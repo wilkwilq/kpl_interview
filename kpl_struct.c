@@ -25,6 +25,12 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     if (NULL == kpl_struct)
         return NULL;
 
-    kpl_struct->end = end;
+    if (start < kpl_struct->start) {
+        kpl_struct->start = start;
+    }
+    if (end > kpl_struct->end && start <= kpl_struct->end) {
+        kpl_struct->end = end;
+    }
+
     return kpl_struct;
 }
