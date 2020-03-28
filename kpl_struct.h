@@ -28,6 +28,7 @@ typedef struct kpl_struct_t kpl_struct_t;
 struct kpl_struct_t {
     int32_t start;
     int32_t end;
+    kpl_struct_t* prev;
     kpl_struct_t* next;
 };
 
