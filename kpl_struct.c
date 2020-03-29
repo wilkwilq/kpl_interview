@@ -26,7 +26,7 @@ static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct
 /* ==================== function prototypes =========================== */
 /* ==================================================================== */
 
-kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
+kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
     if (NULL == kpl_struct) {
         return CreateNewKplStruct(start, end); 
     }
@@ -54,8 +54,23 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     return kpl_struct;
 }
 
-static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end)
-{
+kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    if (NULL == kpl_struct) {
+        return NULL;
+    }
+    if (start == kpl_struct->start && end == kpl_struct->end) {
+	return NULL;
+    }
+    if (end <= kpl_struct->start) {
+	return kpl_struct;
+    }
+    if (start < kpl_struct->end) {
+	kpl_struct->end = start;
+    }
+    return kpl_struct;
+}
+
+static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end) {
     kpl_struct_t* new_struct;
 
     new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
@@ -93,7 +108,7 @@ static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t s
     return kpl_struct;
 } 
 
-static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct, int32_t end){
+static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct, int32_t end) {
     kpl_struct_t* next_kpl_struct;
     kpl_struct_t* temp_kpl_struct;
 
@@ -118,4 +133,4 @@ static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct
     }
 
     return kpl_struct;
-} 
+}

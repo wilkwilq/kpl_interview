@@ -36,5 +36,6 @@ struct kpl_struct_t {
 /* ====================== function declarations ======================= */
 /* ==================================================================== */
 kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end);
+kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
 
 #endif /* _KPL_STRUCT_H */

@@ -445,6 +445,73 @@ TEST(Add_function, create_new_struct) {
     free_allocated_mem(kpl_struct); 
 }
 
+TEST(Delete_function, NULL_structure) {
+    kpl_struct_t* kpl_struct = NULL;
+    
+    kpl_struct = Delete(NULL, 0, 1);
+
+    ASSERT_TRUE(kpl_struct ==  NULL);
+}
+
+TEST(Delete_function, delete_the_same) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 4;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, 1, 4);
+
+    ASSERT_TRUE(output ==  NULL);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Delete_function, one_range_delete_up) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 6;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, 4, 10);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(4, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Delete_function, one_range_delete_outside_up) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 6;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, 6, 10);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(6, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Delete_function, one_range_delete_outside_down) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 6;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, -3, -1);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(6, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
