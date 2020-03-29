@@ -15,39 +15,30 @@
 #include "stdlib.h"
 
 /* ==================================================================== */
-/* ======================== global variables ========================== */
+/* ==================static function declarations ===================== */
 /* ==================================================================== */
+static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end); 
+static kpl_struct_t* CreateNewKplStructBefore(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
+static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
 
 /* ==================================================================== */
 /* ==================== function prototypes =========================== */
 /* ==================================================================== */
 
 kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
-    kpl_struct_t* new_struct;
     kpl_struct_t* output;
     kpl_struct_t* temp;
 
-    if (NULL == kpl_struct)
-        return NULL;
+    if (NULL == kpl_struct) {
+        return CreateNewKplStruct(start, end); 
+    }
 
     if (end < kpl_struct->start) {
-	new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
-	new_struct->start = start;
-	new_struct->end = end;
-	new_struct->next = kpl_struct;
-	new_struct->prev = NULL;
-	kpl_struct->prev = new_struct;
-	return new_struct;
+        return CreateNewKplStructBefore(kpl_struct, start, end); 
     }
 
     if (start > kpl_struct->end && kpl_struct->next == NULL) {
-	new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
-	new_struct->start = start;
-	new_struct->end = end;
-	new_struct->next = NULL;
-	new_struct->prev = kpl_struct;
-	kpl_struct->next = new_struct;
-	return kpl_struct;
+        return CreateNewKplStructAfter(kpl_struct, start, end); 
     } else if (start > kpl_struct->end) {
 	output = Add(kpl_struct->next, start, end);
 	return output->prev; 
@@ -83,3 +74,42 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     
     return kpl_struct;
 }
+
+static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end)
+{
+    kpl_struct_t* new_struct;
+
+    new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    new_struct->start = start;
+    new_struct->end = end;
+    new_struct->next = NULL;
+    new_struct->prev = NULL;
+
+    return new_struct;
+} 
+
+static kpl_struct_t* CreateNewKplStructBefore(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    kpl_struct_t* new_struct;
+
+    new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    new_struct->start = start;
+    new_struct->end = end;
+    new_struct->next = kpl_struct;
+    new_struct->prev = NULL;
+    kpl_struct->prev = new_struct;
+
+    return new_struct;
+}
+
+static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    kpl_struct_t* new_struct;
+
+    new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    new_struct->start = start;
+    new_struct->end = end;
+    new_struct->next = NULL;
+    new_struct->prev = kpl_struct;
+    kpl_struct->next = new_struct;
+
+    return kpl_struct;
+} 

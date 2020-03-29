@@ -19,7 +19,13 @@ static void free_allocated_mem(kpl_struct_t* kpl_struct)
 }
 
 TEST(Add_function, NULL_structure) {
-    ASSERT_TRUE(Add(NULL, 0, 0) ==  NULL);
+    kpl_struct_t* kpl_struct = NULL;
+    
+    kpl_struct = Add(NULL, 0, 1);
+
+    EXPECT_EQ(0, kpl_struct->start);
+    EXPECT_EQ(1, kpl_struct->end);
+    free_allocated_mem(kpl_struct); 
 }
 
 TEST(Add_function, not_NULL_structure) {
@@ -421,6 +427,21 @@ TEST(Add_function, one_range_one_overlapping) {
     ASSERT_TRUE(output->next ==  NULL);
     EXPECT_EQ(1, output->start);
     EXPECT_EQ(5, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Add_function, create_new_struct) {
+    kpl_struct_t* kpl_struct = NULL; 
+    int32_t start = 0;
+    int32_t end = 1;
+    kpl_struct_t* output = NULL;
+
+    output = Add(kpl_struct, start, end);
+
+    ASSERT_TRUE(output->prev ==  NULL);
+    ASSERT_TRUE(output->next ==  NULL);
+    EXPECT_EQ(0, output->start);
+    EXPECT_EQ(1, output->end);
     free_allocated_mem(kpl_struct); 
 }
 
