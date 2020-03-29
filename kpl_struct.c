@@ -12,6 +12,7 @@
 #include <kpl_struct.h>
 #include "stdint.h"
 #include "stddef.h"
+#include "stdlib.h"
 
 /* ==================================================================== */
 /* ======================== global variables ========================== */
@@ -72,6 +73,7 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     	        kpl_struct->next = temp->next;
     	        free(temp);
     	    } else {
+	       kpl_struct->next = NULL;
                 free(temp);
     	    }
         } else {
@@ -80,6 +82,7 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     	       kpl_struct->next = temp->next;
     	       free(temp);
     	   } else {
+	       kpl_struct->next = NULL;
                free(temp);
     	   }
         }       
