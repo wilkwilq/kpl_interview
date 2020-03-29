@@ -35,14 +35,14 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
         return CreateNewKplStructBefore(kpl_struct, start, end); 
     }
 
+    if (start < kpl_struct->start) {
+        kpl_struct->start = start;
+    }
+
     if (start > kpl_struct->end && kpl_struct->next == NULL) {
         return CreateNewKplStructAfter(kpl_struct, start, end); 
     } else if (start > kpl_struct->end) {
 	return (Add(kpl_struct->next, start, end))->prev;
-    }
-
-    if (start < kpl_struct->start) {
-        kpl_struct->start = start;
     }
 
     if (end > kpl_struct->end && kpl_struct->next == NULL) {
