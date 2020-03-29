@@ -69,23 +69,16 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
         };
         if (end > temp->end) {
             kpl_struct->end = end;
-            if (temp->next != NULL) {
-    	        kpl_struct->next = temp->next;
-    	        free(temp);
-    	    } else {
-	       kpl_struct->next = NULL;
-                free(temp);
-    	    }
-        } else {
+	} else {
            kpl_struct->end = temp->end;
-           if (temp->next != NULL) {
-    	       kpl_struct->next = temp->next;
-    	       free(temp);
-    	   } else {
-	       kpl_struct->next = NULL;
-               free(temp);
-    	   }
-        }       
+	}
+        if (temp->next != NULL) {
+    	    kpl_struct->next = temp->next;
+    	    free(temp);
+    	} else {
+	    kpl_struct->next = NULL;
+            free(temp);
+    	}
     }
     
     return kpl_struct;
