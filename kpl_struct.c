@@ -20,15 +20,13 @@
 static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end); 
 static kpl_struct_t* CreateNewKplStructBefore(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
 static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
+static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct, int32_t end);
 
 /* ==================================================================== */
 /* ==================== function prototypes =========================== */
 /* ==================================================================== */
 
 kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
-    kpl_struct_t* output;
-    kpl_struct_t* temp;
-
     if (NULL == kpl_struct) {
         return CreateNewKplStruct(start, end); 
     }
@@ -40,8 +38,7 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     if (start > kpl_struct->end && kpl_struct->next == NULL) {
         return CreateNewKplStructAfter(kpl_struct, start, end); 
     } else if (start > kpl_struct->end) {
-	output = Add(kpl_struct->next, start, end);
-	return output->prev; 
+	return (Add(kpl_struct->next, start, end))->prev;
     }
 
     if (start < kpl_struct->start) {
@@ -51,25 +48,7 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end){
     if (end > kpl_struct->end && kpl_struct->next == NULL) {
 	kpl_struct->end = end;
     } else if (end > kpl_struct->end) {
-        temp = kpl_struct->next;
-        while(temp->next != NULL && end > temp->end) {
-            temp->prev->next = temp->next;
-            output = temp;
-            temp = temp->next;
-            free(output);
-        };
-        if (end > temp->end) {
-            kpl_struct->end = end;
-	} else {
-           kpl_struct->end = temp->end;
-	}
-        if (temp->next != NULL) {
-    	    kpl_struct->next = temp->next;
-    	    free(temp);
-    	} else {
-	    kpl_struct->next = NULL;
-            free(temp);
-    	}
+        kpl_struct = UpdateKplStructEndAndMergeIfNeeded(kpl_struct, end);
     }
     
     return kpl_struct;
@@ -110,6 +89,33 @@ static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t s
     new_struct->next = NULL;
     new_struct->prev = kpl_struct;
     kpl_struct->next = new_struct;
+
+    return kpl_struct;
+} 
+
+static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct, int32_t end){
+    kpl_struct_t* next_kpl_struct;
+    kpl_struct_t* temp_kpl_struct;
+
+    next_kpl_struct = kpl_struct->next;
+    while(next_kpl_struct->next != NULL && end > next_kpl_struct->end) {
+        next_kpl_struct->prev->next = next_kpl_struct->next;
+        temp_kpl_struct = next_kpl_struct;
+        next_kpl_struct = next_kpl_struct->next;
+        free(temp_kpl_struct);
+    };
+    if (end > next_kpl_struct->end) {
+        kpl_struct->end = end;
+    } else {
+       kpl_struct->end = next_kpl_struct->end;
+    }
+    if (next_kpl_struct->next != NULL) {
+        kpl_struct->next = next_kpl_struct->next;
+        free(next_kpl_struct);
+    } else {
+        kpl_struct->next = NULL;
+        free(next_kpl_struct);
+    }
 
     return kpl_struct;
 } 
