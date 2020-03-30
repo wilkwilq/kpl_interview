@@ -55,6 +55,8 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
 }
 
 kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    kpl_struct_t* new_struct;
+    
     if (NULL == kpl_struct) {
         return NULL;
     }
@@ -64,8 +66,21 @@ kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
     if (end <= kpl_struct->start) {
 	return kpl_struct;
     }
-    if (start < kpl_struct->end) {
+    
+    if (start < kpl_struct->end && start > kpl_struct->start && end > kpl_struct->end) {
 	kpl_struct->end = start;
+    }
+    if (end < kpl_struct->end && end > kpl_struct->start && start < kpl_struct->start) {
+	kpl_struct->start = end;
+    }
+    if (start > kpl_struct->start && end < kpl_struct->end) {
+        new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+        new_struct->next = NULL;
+        new_struct->prev = kpl_struct;	
+	new_struct->start = end;
+	new_struct->end = kpl_struct->end; 
+	kpl_struct->end = start;
+	kpl_struct->next = new_struct;
     }
     return kpl_struct;
 }

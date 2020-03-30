@@ -512,6 +512,82 @@ TEST(Delete_function, one_range_delete_outside_down) {
     free_allocated_mem(kpl_struct); 
 }
 
+TEST(Delete_function, one_range_delete_down) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 6;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, -3, 3);
+
+    EXPECT_EQ(3, output->start);
+    EXPECT_EQ(6, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Delete_function, one_range_delete_middle) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct->start = 1;
+    kpl_struct->end = 10;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct, 3, 6);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(3, output->end);
+    EXPECT_EQ(6, output->next->start);
+    EXPECT_EQ(10, output->next->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Delete_function, two_range_delete_down) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct_1, 3, 15);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(3, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
+TEST(Delete_function, two_range_delete_up) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct_1, 15, 25);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(25, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
