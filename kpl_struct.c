@@ -21,6 +21,8 @@ static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end);
 static kpl_struct_t* CreateNewKplStructBefore(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
 static kpl_struct_t* CreateNewKplStructAfter(kpl_struct_t* kpl_struct, int32_t start, int32_t end); 
 static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct, int32_t end);
+static kpl_struct_t* DeleteRangeFromTheMiddle(kpl_struct_t* kpl_struct, int32_t start, int32_t end);
+static kpl_struct_t* DeleteWholeRange(kpl_struct_t* kpl_struct);
 
 /* ==================================================================== */
 /* ==================== function prototypes =========================== */
@@ -55,20 +57,12 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
 }
 
 kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
-    kpl_struct_t* new_struct;
     kpl_struct_t* temp_kpl_struct;
-    kpl_struct_t* temp_kpl_struct2;
     
     if (NULL == kpl_struct) {
         return NULL;
     }
-    if (start == kpl_struct->start && end == kpl_struct->end) {
-	return NULL;
-    }
-    if (end <= kpl_struct->start) {
-	return kpl_struct;
-    }
-    
+
     temp_kpl_struct = kpl_struct;
     while (temp_kpl_struct != NULL) { 
         if (start < temp_kpl_struct->end && start > temp_kpl_struct->start && end > temp_kpl_struct->end) {
@@ -78,28 +72,10 @@ kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
             temp_kpl_struct->start = end;
         }
         if (start > temp_kpl_struct->start && end < temp_kpl_struct->end) {
-            new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
-	    if (temp_kpl_struct->next != NULL) {
-                new_struct->next = temp_kpl_struct->next;
-	    } else {
-                new_struct->next = NULL;
-	    }
-            new_struct->prev = temp_kpl_struct;	
-            new_struct->start = end;
-            new_struct->end = temp_kpl_struct->end; 
-            temp_kpl_struct->end = start;
-            temp_kpl_struct->next = new_struct;
+            DeleteRangeFromTheMiddle(temp_kpl_struct, start, end); 
         }
 	if (start <= temp_kpl_struct->start && end >= temp_kpl_struct->end) {
-	    if (temp_kpl_struct->prev != NULL && temp_kpl_struct->next != NULL) {
-		temp_kpl_struct->prev->next = temp_kpl_struct->next;
-		temp_kpl_struct->next->prev = temp_kpl_struct->prev;
-	    } else if (temp_kpl_struct->next != NULL) {
-                temp_kpl_struct->next->prev = NULL;
-	    }
-	    temp_kpl_struct2 = temp_kpl_struct;
-	    temp_kpl_struct = temp_kpl_struct->next;
-	    free(temp_kpl_struct2);
+            temp_kpl_struct = DeleteWholeRange(temp_kpl_struct); 
 	    continue;
 	}
 	temp_kpl_struct = temp_kpl_struct->next;
@@ -168,6 +144,40 @@ static kpl_struct_t* UpdateKplStructEndAndMergeIfNeeded(kpl_struct_t* kpl_struct
         kpl_struct->next = NULL;
         free(next_kpl_struct);
     }
+
+    return kpl_struct;
+}
+
+static kpl_struct_t* DeleteRangeFromTheMiddle(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    kpl_struct_t* new_struct;
+
+    new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    if (kpl_struct->next != NULL) {
+        new_struct->next = kpl_struct->next;
+    } else {
+        new_struct->next = NULL;
+    }
+    new_struct->prev = kpl_struct;	
+    new_struct->start = end;
+    new_struct->end = kpl_struct->end; 
+    kpl_struct->end = start;
+    kpl_struct->next = new_struct;
+
+    return kpl_struct;
+}
+
+static kpl_struct_t* DeleteWholeRange(kpl_struct_t* kpl_struct) {
+    kpl_struct_t* temp_kpl_struct;
+
+    if (kpl_struct->prev != NULL && kpl_struct->next != NULL) {
+        kpl_struct->prev->next = kpl_struct->next;
+        kpl_struct->next->prev = kpl_struct->prev;
+    } else if (kpl_struct->next != NULL) {
+        kpl_struct->next->prev = NULL;
+    }
+    temp_kpl_struct = kpl_struct;
+    kpl_struct = kpl_struct->next;
+    free(temp_kpl_struct);
 
     return kpl_struct;
 }

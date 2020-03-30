@@ -462,9 +462,6 @@ TEST(Delete_function, delete_the_same) {
     kpl_struct_t* output = NULL;
     
     output = Delete(kpl_struct, 1, 4);
-
-    ASSERT_TRUE(output ==  NULL);
-    free_allocated_mem(kpl_struct); 
 }
 
 TEST(Delete_function, one_range_delete_up) {
