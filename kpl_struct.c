@@ -56,6 +56,8 @@ kpl_struct_t* Add(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
 
 kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
     kpl_struct_t* new_struct;
+    kpl_struct_t* temp_kpl_struct;
+    kpl_struct_t* temp_kpl_struct2;
     
     if (NULL == kpl_struct) {
         return NULL;
@@ -67,20 +69,40 @@ kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
 	return kpl_struct;
     }
     
-    if (start < kpl_struct->end && start > kpl_struct->start && end > kpl_struct->end) {
-	kpl_struct->end = start;
-    }
-    if (end < kpl_struct->end && end > kpl_struct->start && start < kpl_struct->start) {
-	kpl_struct->start = end;
-    }
-    if (start > kpl_struct->start && end < kpl_struct->end) {
-        new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
-        new_struct->next = NULL;
-        new_struct->prev = kpl_struct;	
-	new_struct->start = end;
-	new_struct->end = kpl_struct->end; 
-	kpl_struct->end = start;
-	kpl_struct->next = new_struct;
+    temp_kpl_struct = kpl_struct;
+    while (temp_kpl_struct != NULL) { 
+        if (start < temp_kpl_struct->end && start > temp_kpl_struct->start && end > temp_kpl_struct->end) {
+            temp_kpl_struct->end = start;
+        }
+        if (end < temp_kpl_struct->end && end > temp_kpl_struct->start && start < temp_kpl_struct->start) {
+            temp_kpl_struct->start = end;
+        }
+        if (start > temp_kpl_struct->start && end < temp_kpl_struct->end) {
+            new_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+	    if (temp_kpl_struct->next != NULL) {
+                new_struct->next = temp_kpl_struct->next;
+	    } else {
+                new_struct->next = NULL;
+	    }
+            new_struct->prev = temp_kpl_struct;	
+            new_struct->start = end;
+            new_struct->end = temp_kpl_struct->end; 
+            temp_kpl_struct->end = start;
+            temp_kpl_struct->next = new_struct;
+        }
+	if (start <= temp_kpl_struct->start && end >= temp_kpl_struct->end) {
+	    if (temp_kpl_struct->prev != NULL && temp_kpl_struct->next != NULL) {
+		temp_kpl_struct->prev->next = temp_kpl_struct->next;
+		temp_kpl_struct->next->prev = temp_kpl_struct->prev;
+	    } else if (temp_kpl_struct->next != NULL) {
+                temp_kpl_struct->next->prev = NULL;
+	    }
+	    temp_kpl_struct2 = temp_kpl_struct;
+	    temp_kpl_struct = temp_kpl_struct->next;
+	    free(temp_kpl_struct2);
+	    continue;
+	}
+	temp_kpl_struct = temp_kpl_struct->next;
     }
     return kpl_struct;
 }
