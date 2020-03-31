@@ -702,6 +702,116 @@ TEST(Delete_function, three_range_delete_all) {
     
     output = Delete(kpl_struct_1, -18, 66);
 }
+
+TEST(Get_function, NULL_structure) {
+    kpl_struct_t* kpl_struct = NULL;
+    
+    kpl_struct = Get(NULL, 0, 1);
+
+    ASSERT_TRUE(kpl_struct ==  NULL);
+}
+
+TEST(Get_function, one_range_the_same_start) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = 9;
+    int32_t end = 11;
+    kpl_struct_t* output = NULL;
+    kpl_struct->start = 0;
+    kpl_struct->end = 10;    
+    kpl_struct->next = NULL;
+    kpl_struct->prev = NULL;
+
+    output = Get(kpl_struct, start, end);
+
+    ASSERT_TRUE(output->next ==  NULL);
+    ASSERT_TRUE(output->prev ==  NULL);
+    EXPECT_EQ(0, output->start);
+    EXPECT_EQ(10, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Get_function, one_range_the_same_end) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = -10;
+    int32_t end = 1;
+    kpl_struct_t* output = NULL;
+    kpl_struct->start = 0;
+    kpl_struct->end = 10;    
+    kpl_struct->next = NULL;
+    kpl_struct->prev = NULL;
+
+    output = Get(kpl_struct, start, end);
+
+    ASSERT_TRUE(output->next ==  NULL);
+    ASSERT_TRUE(output->prev ==  NULL);
+    EXPECT_EQ(0, output->start);
+    EXPECT_EQ(10, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Get_function, two_range_the_same_second_up) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, 29, 40);
+
+    EXPECT_EQ(20, output->start);
+    EXPECT_EQ(30, output->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
+TEST(Get_function, two_range_the_same_second_down) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, 15, 21);
+
+    EXPECT_EQ(20, output->start);
+    EXPECT_EQ(30, output->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
+TEST(Get_function, two_range_get_two) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, 1, 31);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
+}
+
 int main(int argc, char **argv) {
     testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

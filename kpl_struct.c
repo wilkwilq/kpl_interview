@@ -83,6 +83,48 @@ kpl_struct_t* Delete(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
     return kpl_struct;
 }
 
+kpl_struct_t* Get(kpl_struct_t* kpl_struct, int32_t start, int32_t end) {
+    kpl_struct_t* new_struct;
+    kpl_struct_t* return_kpl_struct = NULL;
+    
+    if (NULL == kpl_struct) {
+	return NULL;
+    }
+    kpl_struct_t* temp_kpl_struct;
+    temp_kpl_struct = kpl_struct;
+    while (temp_kpl_struct != NULL) { 
+	if (start >= temp_kpl_struct->start && start < temp_kpl_struct->end) {
+	    if (return_kpl_struct == NULL) {
+                return_kpl_struct = CreateNewKplStruct(temp_kpl_struct->start, temp_kpl_struct->end);
+	    } else {
+                CreateNewKplStructAfter(return_kpl_struct, temp_kpl_struct->start, temp_kpl_struct->end);
+                return_kpl_struct = return_kpl_struct->next; 
+	    }
+	}
+	if (end > temp_kpl_struct->start && end < temp_kpl_struct->end) {
+	    if (return_kpl_struct == NULL) {
+                return_kpl_struct = CreateNewKplStruct(temp_kpl_struct->start, temp_kpl_struct->end);
+	    } else {
+                CreateNewKplStructAfter(return_kpl_struct, temp_kpl_struct->start, temp_kpl_struct->end);
+                return_kpl_struct = return_kpl_struct->next; 
+	    }
+	}
+	if (start < temp_kpl_struct->start && end >= temp_kpl_struct->end) {
+	    if (return_kpl_struct == NULL) {
+                return_kpl_struct = CreateNewKplStruct(temp_kpl_struct->start, temp_kpl_struct->end);
+	    } else {
+                CreateNewKplStructAfter(return_kpl_struct, temp_kpl_struct->start, temp_kpl_struct->end);
+                return_kpl_struct = return_kpl_struct->next; 
+	    }
+	}
+	temp_kpl_struct = temp_kpl_struct->next;
+    }
+    while(return_kpl_struct->prev != NULL) {
+	return_kpl_struct = return_kpl_struct->prev;
+    }
+    return return_kpl_struct;
+}
+
 static kpl_struct_t* CreateNewKplStruct(int32_t start, int32_t end) {
     kpl_struct_t* new_struct;
 
