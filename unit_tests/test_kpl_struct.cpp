@@ -728,6 +728,7 @@ TEST(Get_function, one_range_the_same_start) {
     EXPECT_EQ(0, output->start);
     EXPECT_EQ(10, output->end);
     free_allocated_mem(kpl_struct); 
+    free_allocated_mem(output); 
 }
 
 TEST(Get_function, one_range_the_same_end) {
@@ -747,6 +748,7 @@ TEST(Get_function, one_range_the_same_end) {
     EXPECT_EQ(0, output->start);
     EXPECT_EQ(10, output->end);
     free_allocated_mem(kpl_struct); 
+    free_allocated_mem(output); 
 }
 
 TEST(Get_function, two_range_the_same_second_up) {
@@ -767,6 +769,7 @@ TEST(Get_function, two_range_the_same_second_up) {
     EXPECT_EQ(20, output->start);
     EXPECT_EQ(30, output->end);
     free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
 }
 
 TEST(Get_function, two_range_the_same_second_down) {
@@ -787,6 +790,7 @@ TEST(Get_function, two_range_the_same_second_down) {
     EXPECT_EQ(20, output->start);
     EXPECT_EQ(30, output->end);
     free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
 }
 
 TEST(Get_function, two_range_get_two) {
