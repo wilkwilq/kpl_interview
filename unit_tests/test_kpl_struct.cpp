@@ -703,6 +703,86 @@ TEST(Delete_function, three_range_delete_all) {
     output = Delete(kpl_struct_1, -18, 66);
 }
 
+TEST(Delete_function, three_range_delete_upper) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_3 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = kpl_struct_3;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_3->start = 40;
+    kpl_struct_3->end = 50;    
+    kpl_struct_3->next = NULL;    
+    kpl_struct_3->prev = kpl_struct_2;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct_1, 40, 50);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
+TEST(Delete_function, three_range_delete_two) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_3 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = kpl_struct_3;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_3->start = 40;
+    kpl_struct_3->end = 50;    
+    kpl_struct_3->next = NULL;    
+    kpl_struct_3->prev = kpl_struct_2;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct_1, 20, 50);
+
+    ASSERT_TRUE(output->next ==  NULL);
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
+TEST(Delete_function, three_range_delete_one_with_middle) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_3 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = kpl_struct_3;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_3->start = 40;
+    kpl_struct_3->end = 50;    
+    kpl_struct_3->next = NULL;    
+    kpl_struct_3->prev = kpl_struct_2;    
+    kpl_struct_t* output = NULL;
+    
+    output = Delete(kpl_struct_1, 21, 50);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(21, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+}
+
 TEST(Get_function, NULL_structure) {
     kpl_struct_t* kpl_struct = NULL;
     

@@ -208,6 +208,8 @@ static kpl_struct_t* DeleteWholeRange(kpl_struct_t* kpl_struct) {
         kpl_struct->next->prev = kpl_struct->prev;
     } else if (kpl_struct->next != NULL) {
         kpl_struct->next->prev = NULL;
+    } else if (kpl_struct->prev != NULL) {
+        kpl_struct->prev->next = NULL;
     }
     temp_kpl_struct = kpl_struct;
     kpl_struct = kpl_struct->next;
