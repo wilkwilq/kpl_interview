@@ -312,6 +312,48 @@ TEST(Add_function, three_range_add_fourth_up) {
     free_allocated_mem(kpl_struct); 
 }
 
+TEST(Add_function, three_range_add_fourth_up_merge) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = 9;
+    int32_t end = 15;
+    kpl_struct_t* output = NULL;
+    kpl_struct->start = 1;
+    kpl_struct->end = 2;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    output = Add(kpl_struct, 3, 5);
+    output = Add(kpl_struct, 7, 9);
+    output = Add(output, start, end);
+
+    ASSERT_TRUE(output->prev ==  NULL);
+    ASSERT_TRUE(output->next !=  NULL);
+    ASSERT_TRUE(output->next->next->next ==  NULL);
+    EXPECT_EQ(7, output->next->next->start);
+    EXPECT_EQ(15, output->next->next->end);
+    free_allocated_mem(kpl_struct); 
+}
+
+TEST(Add_function, three_range_add_fourth_down_merge) {
+    kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    int32_t start = -10;
+    int32_t end = 1;
+    kpl_struct_t* output = NULL;
+    kpl_struct->start = 1;
+    kpl_struct->end = 2;    
+    kpl_struct->next = NULL;    
+    kpl_struct->prev = NULL;    
+    output = Add(kpl_struct, 3, 5);
+    output = Add(kpl_struct, 7, 9);
+    output = Add(output, start, end);
+
+    ASSERT_TRUE(output->prev ==  NULL);
+    ASSERT_TRUE(output->next !=  NULL);
+    ASSERT_TRUE(output->next->next->next ==  NULL);
+    EXPECT_EQ(-10, output->start);
+    EXPECT_EQ(2, output->end);
+    free_allocated_mem(kpl_struct); 
+}
+
 TEST(Add_function, two_range_one_merge) {
     kpl_struct_t* kpl_struct = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
     int32_t start = 4;
@@ -892,6 +934,86 @@ TEST(Get_function, two_range_get_two) {
     EXPECT_EQ(10, output->end);
     EXPECT_EQ(20, output->next->start);
     EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
+}
+
+TEST(Get_function, two_range_get_two_larger) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = NULL;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, -1, 31);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
+}
+
+TEST(Get_function, three_range_get_two_up) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_3 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = kpl_struct_3;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_3->start = 40;
+    kpl_struct_3->end = 50;    
+    kpl_struct_3->next = NULL;    
+    kpl_struct_3->prev = kpl_struct_2;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, 21, 50);
+
+    EXPECT_EQ(20, output->start);
+    EXPECT_EQ(30, output->end);
+    EXPECT_EQ(40, output->next->start);
+    EXPECT_EQ(50, output->next->end);
+    free_allocated_mem(kpl_struct_1); 
+    free_allocated_mem(output); 
+}
+
+TEST(Get_function, three_range_get_two_down) {
+    kpl_struct_t* kpl_struct_1 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_2 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_t* kpl_struct_3 = (kpl_struct_t*)malloc(sizeof(kpl_struct_t));
+    kpl_struct_1->start = 1;
+    kpl_struct_1->end = 10;    
+    kpl_struct_1->next = kpl_struct_2;    
+    kpl_struct_1->prev = NULL;    
+    kpl_struct_2->start = 20;
+    kpl_struct_2->end = 30;    
+    kpl_struct_2->next = kpl_struct_3;    
+    kpl_struct_2->prev = kpl_struct_1;    
+    kpl_struct_3->start = 40;
+    kpl_struct_3->end = 50;    
+    kpl_struct_3->next = NULL;    
+    kpl_struct_3->prev = kpl_struct_2;    
+    kpl_struct_t* output = NULL;
+    
+    output = Get(kpl_struct_1, -20, 39);
+
+    EXPECT_EQ(1, output->start);
+    EXPECT_EQ(10, output->end);
+    EXPECT_EQ(20, output->next->start);
+    EXPECT_EQ(30, output->next->end);
+    ASSERT_TRUE(output->next->next ==  NULL);
     free_allocated_mem(kpl_struct_1); 
     free_allocated_mem(output); 
 }
